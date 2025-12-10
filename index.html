@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אוטו בין חברים</title>
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            animation: zoomIn 0.3s;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .close-modal:hover {
+            color: #bbb;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); }
+            to { transform: scale(1); }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .car-info {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .car-info h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-item::before {
+            content: "✓";
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .highlights {
+            background: #e8f4f8;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .highlights h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .highlights ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .highlights li {
+            padding: 8px 0;
+            padding-right: 25px;
+            position: relative;
+        }
+        
+        .highlights li::before {
+            content: "→";
+            position: absolute;
+            right: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .important-notes {
+            background: #fff3cd;
+            border-right: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .important-notes h3 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .important-notes ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .important-notes li {
+            padding: 5px 0;
+            color: #856404;
+            font-size: 0.95em;
+        }
+        
+        .terms {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+        
+        .terms h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .cta {
+            text-align: center;
+            padding: 30px 0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 50px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.3em;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+        
+        .contact-info {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            font-size: 1.1em;
+            color: #2c3e50;
+        }
+        
+        .contact-info strong {
+            color: #667eea;
+            font-size: 1.3em;
+        }
+        
+        .image-gallery {
+            margin-bottom: 30px;
+        }
+        
+        .main-image {
+            width: 100%;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .main-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .main-image img:hover {
+            transform: scale(1.02);
+        }
+        
+        .thumbnail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .thumbnail-grid img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .thumbnail-grid img:hover {
+            transform: scale(1.05);
+        }
+        
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .header p {
+                font-size: 1em;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .thumbnail-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .thumbnail-grid img {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗 רכב לשימוש לפרק זמן ארוך</h1>
+            <p>טליה מציעה רכב לחברים בזמן שהיא טסה, 2026</p>
+        </div>
+        
+        <div class="content">
+            <div class="image-gallery">
+                <div class="main-image">
+                    <img src="car-side.jpeg" alt="דייהטסו סיריון - מבט צד" onclick="openModal(this.src)">
+                </div>
+                <div class="thumbnail-grid">
+                    <img src="car-front.jpg" alt="דייהטסו סיריון - מבט קדמי" onclick="openModal(this.src)">
+                    <img src="car-back.jpeg" alt="דייהטסו סיריון - מבט אחורי" onclick="openModal(this.src)">
+                    
+                </div>
+            </div>
+            
+            <div class="car-info">
+                <h2>מי החתן</h2>
+                <div class="info-grid">
+                    <div class="info-item">גיר אוטומטי</div>
+                    <div class="info-item">מצבר חדש (נובמבר 2025)</div>
+                    <div class="info-item">גלגלים חדשים (אפריל 2025)</div>
+                    <div class="info-item">חלונות חשמליים</div>
+                    <div class="info-item">מזגן תקין</div>
+                    <div class="info-item">עבר טסט (נובמבר 2025)</div>
+                </div>
+                <p style="margin-top: 15px;"><strong>מנוע במצב טוב</strong> - בדיקה מכנית במוסך ✓</p>
+            </div>
+            
+            <div class="highlights">
+                <h3>אני טסה, ומחפשת חבר שישתמש ברכב</h3>
+                <p style="line-height: 1.8; color: #2c3e50;">
+                    אני טסה ב-22.12.2025, וצפויה להגיע לישראל שוב בנובמבר 2026. עד אז הייתי רוצה לתת את הרכב לחבר או חברה שאפשר לסמוך עליהם, בעלות סבירה והוגנת, כדי שישתמש בו בכיף עד שאני חוזרת. 
+                    <strong>רלוונטי גם לחלק מהזמן.</strong>
+                </p>
+            </div>
+            
+            <div class="important-notes">
+                <h3>⚠️ חשוב לדעת</h3>
+                <ul>
+                    <li><strong>(א)*</strong> מד הדלק לא מדויק - יש למלא כשהסמן מגיע לאמצע או בערך ב-400 ק"מ</li>
+                    <li><strong>(ב)*</strong> נעילה ופתיחה ידנית עם מפתח (ללא שלט)</li>
+                    <li><strong>(ג)</strong> יש לו עיקום קל בפח מאחור (קוסמטי, ניתן לראות בתמונות)</li>
+                    <li><strong>(ד)</strong> יש ביטוח חובה וצד ג', אין ביטוח מקיף. ביטוח לכל נהג</li>
+                </ul>
+                <p style="margin-top: 15px; font-size: 0.9em; font-style: italic; color: #856404;">
+                    * אפשר לבחון אפשרות לתקן את הליקויים האלה על חשבוני בהמשך
+                </p>
+            </div>
+            
+            <div class="terms">
+                <h3>נשמע רלוונטי?</h3>
+                <p>נסכים בינינו ש:</p>
+                <ul style="list-style: disc; padding-right: 20px; margin-top: 10px;">
+                    <li>אתה/את נהג/ת ותיק/ה ללא תאונות</li>
+                    <li>אם תהיה תקלה ברכב כתוצאה מבלאי - היא תתוקן על חשבוני</li>
+                    <li>אם ייגרם נזק לרכב במהלך התקופה - הוא יתוקן על חשבונך</li>
+                </ul>
+            </div>
+            
+            <div class="cta">
+                <a href="https://wa.me/972528473674?text=היוש,%20ראיתי%20שאת%20מציעה%20את%20הרכב%20לשימוש%20בין%20חברים.%20איזה%20כיף%20שאנחנו%20חברים" class="cta-button">💬 בואו נדבר</a>
+            </div>
+            
+            <div class="contact-info">
+                <p><strong>טליה - 052-847-3674</strong></p>
+            </div>
+        </div>
+    </div>
+    <div id="imageModal" class="modal" onclick="closeModal()">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+    
+    <script>
+        function openModal(src) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.classList.add('active');
+            modalImg.src = src;
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
